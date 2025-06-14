@@ -27,7 +27,7 @@ const Header = ({ showNavbar, setShowNavbar }) => {
     setSignupSuccess("");
     
     try {
-      const res = await fetch("http://localhost:8080/api/users", {
+      const res = await fetch("https://backend-production-1c3e.up.railway.app/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(signupData),
@@ -58,7 +58,7 @@ const Header = ({ showNavbar, setShowNavbar }) => {
     setLoginError("");
     
     try {
-      const res = await fetch("http://localhost:8080/api/login", {
+      const res = await fetch("https://backend-production-1c3e.up.railway.app/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginData),

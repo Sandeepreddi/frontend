@@ -16,7 +16,7 @@ function MyBlogs({ user }) {
       if (!user?.id) return;
       
       setLoading(true);
-      const response = await fetch(`http://localhost:8080/api/users/${user.id}`);
+      const response = await fetch(`https://backend-production-1c3e.up.railway.app/api/users/${user.id}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
@@ -56,7 +56,7 @@ function MyBlogs({ user }) {
         blog === editingBlog ? { ...blog, ...editFormData } : blog
       );
 
-      const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+      const response = await fetch(`https://backend-production-1c3e.up.railway.app/api/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ function MyBlogs({ user }) {
     try {
       const updatedBlogs = blogs.filter(blog => blog !== blogToDelete);
 
-      const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+      const response = await fetch(`https://backend-production-1c3e.up.railway.app/api/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

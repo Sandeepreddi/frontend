@@ -10,7 +10,7 @@ function Body() {
     const fetchBlogs = async () => {
       try {
         setLoading(true);
-        const res = await fetch('http://localhost:8080/api/users', {
+        const res = await fetch('https://backend-production-1c3e.up.railway.app/api/users', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
