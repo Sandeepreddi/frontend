@@ -1,0 +1,15 @@
+@media (max-width: 768px) {
+    body {
+      font-size: 14px;
+    }
+  
+    .navbar {
+      width: 100% !important;
+    }
+  
+    .main-content {
+      margin-left: 0 !important;
+      padding: 0.5rem !important;
+    }
+  }
+  

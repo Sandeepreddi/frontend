@@ -6,7 +6,6 @@ const Header = ({ showNavbar, setShowNavbar }) => {
   const [showSignupOptions, setShowSignupOptions] = useState(false);
   const [user, setUser] = useState(null);
   
-  // State for error and success messages
   const [signupError, setSignupError] = useState("");
   const [loginError, setLoginError] = useState("");
   const [signupSuccess, setSignupSuccess] = useState("");
@@ -36,7 +35,6 @@ const Header = ({ showNavbar, setShowNavbar }) => {
       const data = await res.json();
       
       if (!res.ok) {
-        // Handle specific error cases
         if (res.status === 400 && data.includes("already exists")) {
           throw new Error("Email already in use. Please use a different email.");
         }
@@ -47,7 +45,7 @@ const Header = ({ showNavbar, setShowNavbar }) => {
       localStorage.setItem('blogUser', JSON.stringify(data));
       setShowSignupOptions(false);
       setSignupSuccess("Signup successful! You are now logged in.");
-      setSignupData({ name: "", email: "", password: "" }); // Clear form
+      setSignupData({ name: "", email: "", password: "" });
     } catch (error) {
       setSignupError("signup failed "+"User Already Exist");
     }
@@ -73,7 +71,7 @@ const Header = ({ showNavbar, setShowNavbar }) => {
       setUser(data);
       localStorage.setItem('blogUser', JSON.stringify(data));
       setShowLoginOptions(false);
-      setLoginData({ email: "", password: "" }); // Clear form
+      setLoginData({ email: "", password: "" });
     } catch (error) {
       setLoginError(error.message);
     }
@@ -82,141 +80,152 @@ const Header = ({ showNavbar, setShowNavbar }) => {
   return (
     <div className="relative">
       <header className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-indigo-700 shadow-md">
-        {user && (
-          <div className="flex items-center gap-2">
+        {/* Left side - Menu button (only when logged in) */}
+        <div className="flex items-center flex-shrink-0">
+          {user && (
             <IoMenuSharp
               onClick={() => {
                 setShowNavbar(!showNavbar);
                 setShowLoginOptions(false);
                 setShowSignupOptions(false);
               }}
-              className="text-white cursor-pointer w-6 h-6"
+              className="text-white cursor-pointer w-6 h-6 mr-2"
             />
-          </div>
-        )}
+          )}
+        </div>
 
-        <h1 className="text-3xl font-bold text-white absolute left-1/2 transform -translate-x-1/2 font-sans">
-          Blog
-        </h1>
+        {/* Center - Blog title */}
+        <div className="flex-grow text-center">
+          <h1 className="text-xl md:text-3xl font-bold text-white font-sans truncate">
+            Blog
+          </h1>
+        </div>
 
-        <div className="ml-auto flex items-center gap-4">
+        {/* Right side - Auth buttons or user info */}
+        <div className="flex items-center justify-end flex-shrink-0 ml-2">
           {user ? (
-            <>
-              <span className="text-white font-medium">{user.name}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-white font-medium hidden sm:inline-block">
+                {user.name}
+              </span>
               <img
                 src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
                 alt="Profile"
                 className="w-8 h-8 rounded-full"
               />
-            </>
+            </div>
           ) : (
-            <>
-              <button
-                onClick={() => {
-                  setShowSignupOptions(!showSignupOptions);
-                  setShowLoginOptions(false);
-                  setShowNavbar(false);
-                  setSignupError(""); // Clear previous errors
-                  setSignupSuccess(""); // Clear previous success
-                }}
-                className="px-3 py-1 bg-white text-blue-600 rounded-full hover:bg-gray-100 font-medium"
-              >
-                Sign Up
-              </button>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setShowSignupOptions(!showSignupOptions);
+                    setShowLoginOptions(false);
+                    setShowNavbar(false);
+                    setSignupError("");
+                    setSignupSuccess("");
+                  }}
+                  className="px-3 py-1 bg-white text-blue-600 rounded-full hover:bg-gray-100 font-medium text-sm md:text-base"
+                >
+                  Sign Up
+                </button>
 
-              {showSignupOptions && (
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 py-1" style={{ top: '100%' }}>
-                  <form onSubmit={handleSignup} className="px-4 py-2">
-                    {signupError && (
-                      <div className="mb-2 p-2 text-xs text-red-600 bg-red-50 rounded">
-                        {signupError}
-                      </div>
-                    )}
-                    {signupSuccess && (
-                      <div className="mb-2 p-2 text-xs text-green-600 bg-green-50 rounded">
-                        {signupSuccess}
-                      </div>
-                    )}
-                    <input
-                      type="text"
-                      placeholder="Full Name"
-                      className="w-full px-3 py-1 mb-2 border rounded-md text-sm"
-                      value={signupData.name}
-                      onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
-                      required
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      className="w-full px-3 py-1 mb-2 border rounded-md text-sm"
-                      value={signupData.email}
-                      onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
-                      required
-                    />
-                    <input
-                      type="password"
-                      placeholder="Password"
-                      className="w-full px-3 py-1 mb-2 border rounded-md text-sm"
-                      value={signupData.password}
-                      onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                      required
-                    />
-                    <button
-                      type="submit"
-                      className="w-full bg-blue-500 text-white py-1 rounded-md text-sm hover:bg-blue-600"
-                    >
-                      Sign Up
-                    </button>
-                  </form>
-                </div>
-              )}
+                {showSignupOptions && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 py-1" style={{ top: '100%' }}>
+                    <form onSubmit={handleSignup} className="px-4 py-2">
+                      {signupError && (
+                        <div className="mb-2 p-2 text-xs text-red-600 bg-red-50 rounded">
+                          {signupError}
+                        </div>
+                      )}
+                      {signupSuccess && (
+                        <div className="mb-2 p-2 text-xs text-green-600 bg-green-50 rounded">
+                          {signupSuccess}
+                        </div>
+                      )}
+                      <input
+                        type="text"
+                        placeholder="Full Name"
+                        className="w-full px-3 py-1 mb-2 border rounded-md text-sm"
+                        value={signupData.name}
+                        onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
+                        required
+                      />
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        className="w-full px-3 py-1 mb-2 border rounded-md text-sm"
+                        value={signupData.email}
+                        onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                        required
+                      />
+                      <input
+                        type="password"
+                        placeholder="Password"
+                        className="w-full px-3 py-1 mb-2 border rounded-md text-sm"
+                        value={signupData.password}
+                        onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                        required
+                      />
+                      <button
+                        type="submit"
+                        className="w-full bg-blue-500 text-white py-1 rounded-md text-sm hover:bg-blue-600"
+                      >
+                        Sign Up
+                      </button>
+                    </form>
+                  </div>
+                )}
+              </div>
 
-              <button
-                onClick={() => {
-                  setShowLoginOptions(!showLoginOptions);
-                  setShowSignupOptions(false);
-                  setShowNavbar(false);
-                  setLoginError(""); // Clear previous errors
-                }}
-                className="px-3 py-1 bg-emerald-400 text-white rounded-full hover:bg-emerald-500 font-medium"
-              >
-                Login
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setShowLoginOptions(!showLoginOptions);
+                    setShowSignupOptions(false);
+                    setShowNavbar(false);
+                    setLoginError("");
+                  }}
+                  className="px-3 py-1 bg-emerald-400 text-white rounded-full hover:bg-emerald-500 font-medium text-sm md:text-base"
+                >
+                  Login
+                </button>
 
-              {showLoginOptions && (
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 py-1" style={{ top: '100%' }}>
-                  <form onSubmit={handleLogin} className="px-4 py-2">
-                    {loginError && (
-                      <div className="mb-2 p-2 text-xs text-red-600 bg-red-50 rounded">
-                        {loginError}
-                      </div>
-                    )}
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      className="w-full px-3 py-1 mb-2 border rounded-md text-sm"
-                      value={loginData.email}
-                      onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                      required
-                    />
-                    <input
-                      type="password"
-                      placeholder="Password"
-                      className="w-full px-3 py-1 mb-2 border rounded-md text-sm"
-                      value={loginData.password}
-                      onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                      required
-                    />
-                    <button
-                      type="submit"
-                      className="w-full bg-emerald-400 text-white py-1 rounded-md text-sm hover:bg-emerald-500"
-                    >
-                      Login
-                    </button>
-                  </form>
-                </div>
-              )}
-            </>
+                {showLoginOptions && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 py-1" style={{ top: '100%' }}>
+                    <form onSubmit={handleLogin} className="px-4 py-2">
+                      {loginError && (
+                        <div className="mb-2 p-2 text-xs text-red-600 bg-red-50 rounded">
+                          {loginError}
+                        </div>
+                      )}
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        className="w-full px-3 py-1 mb-2 border rounded-md text-sm"
+                        value={loginData.email}
+                        onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                        required
+                      />
+                      <input
+                        type="password"
+                        placeholder="Password"
+                        className="w-full px-3 py-1 mb-2 border rounded-md text-sm"
+                        value={loginData.password}
+                        onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                        required
+                      />
+                      <button
+                        type="submit"
+                        className="w-full bg-emerald-400 text-white py-1 rounded-md text-sm hover:bg-emerald-500"
+                      >
+                        Login
+                      </button>
+                    </form>
+                  </div>
+                )}
+              </div>
+            </div>
           )}
         </div>
       </header>
