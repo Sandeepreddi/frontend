@@ -5,6 +5,7 @@ function Body() {
   const [blogs, setBlogs] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [expandedBlogs, setExpandedBlogs] = useState({});
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -41,6 +42,13 @@ function Body() {
     fetchBlogs();
   }, []);
 
+  const toggleExpand = (blogId) => {
+    setExpandedBlogs(prev => ({
+      ...prev,
+      [blogId]: !prev[blogId]
+    }));
+  };
+
   if (loading) {
     return <div className="text-center py-8 text-lg">Loading blogs...</div>;
   }
@@ -58,15 +66,30 @@ function Body() {
           {blogs.map((blog, index) => (
             <div
               key={index}
-              className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg border border-gray-100 sm:border-gray-200 hover:shadow-lg sm:hover:shadow-xl transition duration-300"
+              className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg border border-gray-100 sm:border-gray-200 hover:shadow-lg sm:hover:shadow-xl transition duration-300 flex flex-col"
             >
-              <h3 className="text-xl sm:text-2xl font-semibold text-indigo-700 sm:text-indigo-800 mb-2 line-clamp-2">
+              <h3 className="text-xl sm:text-2xl font-semibold text-indigo-700 sm:text-indigo-800 mb-2">
                 {blog.title}
               </h3>
-              <p className="text-gray-600 sm:text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base leading-relaxed line-clamp-3">
-                {blog.content}
-              </p>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-gray-500 gap-1 sm:gap-0">
+              
+              <div className="flex-grow">
+                <p className={`text-gray-600 sm:text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base leading-relaxed ${
+                  expandedBlogs[index] ? '' : 'line-clamp-4'
+                }`}>
+                  {blog.content}
+                </p>
+              </div>
+
+              {blog.content.length > 200 && (
+                <button
+                  onClick={() => toggleExpand(index)}
+                  className="text-blue-600 hover:text-blue-800 text-sm font-medium self-start mb-3"
+                >
+                  {expandedBlogs[index] ? 'Read Less' : 'Read More'}
+                </button>
+              )}
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-gray-500 gap-1 sm:gap-0 mt-auto">
                 <div className="flex items-center gap-1 sm:gap-2">
                   <UserIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="truncate max-w-[120px] sm:max-w-none">{blog.author}</span>
