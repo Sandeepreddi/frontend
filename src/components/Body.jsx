@@ -24,7 +24,6 @@ function Body() {
         }
 
         const users = await res.json();
-        // Collect all blogs from all users
         const allBlogs = users.flatMap(user =>
           (user.blogs || []).map(blog => ({ ...blog, author: user.name }))
         );
@@ -43,32 +42,42 @@ function Body() {
   }, []);
 
   if (loading) {
-    return <div className="text-center py-8">Loading blogs...</div>;
+    return <div className="text-center py-8 text-lg">Loading blogs...</div>;
   }
 
   if (error) {
-    return <div className="text-center py-8 text-red-500">{error}</div>;
+    return <div className="text-center py-8 text-red-500 text-lg">{error}</div>;
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="px-4 py-6 sm:p-8 max-w-4xl mx-auto">
       {blogs.length === 0 ? (
-        <p className="text-center text-gray-500">No blogs found.</p>
+        <p className="text-center text-gray-500 text-lg">No blogs found.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
           {blogs.map((blog, index) => (
             <div
               key={index}
-              className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transition duration-300"
+              className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg border border-gray-100 sm:border-gray-200 hover:shadow-lg sm:hover:shadow-xl transition duration-300"
             >
-              <h3 className="text-2xl font-semibold text-indigo-800 mb-2">{blog.title}</h3>
-              <p className="text-gray-700 mb-4 text-sm leading-relaxed">{blog.content}</p>
-              <div className="flex items-center justify-between text-sm text-gray-500">
-                <div className="flex items-center gap-2">
-                  <UserIcon className="w-4 h-4" />
-                  <span>{blog.author}</span>
+              <h3 className="text-xl sm:text-2xl font-semibold text-indigo-700 sm:text-indigo-800 mb-2 line-clamp-2">
+                {blog.title}
+              </h3>
+              <p className="text-gray-600 sm:text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base leading-relaxed line-clamp-3">
+                {blog.content}
+              </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-gray-500 gap-1 sm:gap-0">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <UserIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="truncate max-w-[120px] sm:max-w-none">{blog.author}</span>
                 </div>
-                <span>{new Date(blog.createdAt).toLocaleString()}</span>
+                <span className="text-gray-400 sm:text-gray-500">
+                  {new Date(blog.createdAt).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </span>
               </div>
             </div>
           ))}
