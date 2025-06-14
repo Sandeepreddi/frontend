@@ -6,10 +6,11 @@ function MyBlogs({ user, isSideNavOpen }) {
   const [error, setError] = useState(null);
   const [editingBlog, setEditingBlog] = useState(null);
   const [editFormData, setEditFormData] = useState({ title: '', content: '' });
+  const [expandedBlogs, setExpandedBlogs] = useState({});
 
   useEffect(() => {
     fetchUserBlogs();
-  }, [user?.id]); // Re-fetch when user.id changes
+  }, [user?.id]);
 
   const fetchUserBlogs = async () => {
     try {
@@ -31,6 +32,13 @@ function MyBlogs({ user, isSideNavOpen }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleExpand = (blogId) => {
+    setExpandedBlogs(prev => ({
+      ...prev,
+      [blogId]: !prev[blogId]
+    }));
   };
 
   const handleEditClick = (blog) => {
@@ -180,7 +188,7 @@ function MyBlogs({ user, isSideNavOpen }) {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {blogs.map((blog, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden relative">
+              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden relative flex flex-col h-full">
                 <div className="absolute top-2 right-2 flex space-x-2">
                   <button
                     onClick={() => handleEditClick(blog)}
@@ -201,16 +209,22 @@ function MyBlogs({ user, isSideNavOpen }) {
                     </svg>
                   </button>
                 </div>
-                <div className="p-6">
+                <div className="p-6 flex-grow">
                   <h2 className="text-xl font-bold mb-2">{blog.title}</h2>
-                  <p className="text-gray-600 mb-4">
-                    {blog.content.length > 150 
-                      ? `${blog.content.substring(0, 150)}...` 
-                      : blog.content}
+                  <p className={`text-gray-600 mb-4 ${expandedBlogs[index] ? '' : 'line-clamp-4'}`}>
+                    {blog.content}
                   </p>
-                  <div className="text-sm text-gray-500">
-                    Created: {new Date(blog.createdAt).toLocaleDateString()}
-                  </div>
+                </div>
+                {blog.content.length > 200 && (
+                  <button
+                    onClick={() => toggleExpand(index)}
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium px-6 pb-4"
+                  >
+                    {expandedBlogs[index] ? 'Read Less' : 'Read More'}
+                  </button>
+                )}
+                <div className="text-sm text-gray-500 px-6 pb-4">
+                  Created: {new Date(blog.createdAt).toLocaleDateString()}
                 </div>
               </div>
             ))}
